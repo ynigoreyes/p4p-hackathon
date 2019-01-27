@@ -8,7 +8,7 @@ export default class ProfileScreen extends React.Component {
   state = {
     fname: '',
     lname: '',
-    email: '',
+    email: '', // How to get email from super(props)
     age: '',
     interests: ''
   }
@@ -54,7 +54,8 @@ export default class ProfileScreen extends React.Component {
           />
           <Button
             title='Save'
-            onPress={this.updateProfile}>
+            onPress={this.updateProfile}
+          />
       </View>
     )
   }
