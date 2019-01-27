@@ -4,6 +4,12 @@ var bodyParser = require("body-parser");
 require('./models/User');
 require('./config/passport');
 
+const mongoose = require('mongoose');
+let dev_db_url = 'mongodb://Omar:dash1234@ds247670.mlab.com:47670/bauthql';
+mongoose.connect(dev_db_url);
+mongoose.Promise = global.Promise;
+let db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
