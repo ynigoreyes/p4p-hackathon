@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -79,7 +78,7 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
-=======
+
 **/*/.expo/*
 npm-debug.*
 *.jks
@@ -87,5 +86,5 @@ npm-debug.*
 *.key
 *.mobileprovision
 .DS_Store
+
 node_modules
->>>>>>> 33010db9b958ca52a4432d2df4219142e81ecb1f
