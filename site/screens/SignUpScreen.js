@@ -1,15 +1,27 @@
 import React from 'react'
-import { View, Button } from 'react-native'
+import { View, Button, AsyncStorage } from 'react-native'
 import { SCREEN_STATES } from '../constants/ScreenStates.js'
 import SignUpForm from '../components/SignUpForm.js'
 import axios from 'axios'
+import { connectionString } from '../constants/ConnectionString.js'
 
 export default class SignUpScreen extends React.Component {
 
   handleRegister = (form) => {
-    if (true) { // Successfully logged in
-      this.props.handleAuthChange(true)
-    }
+    axios.post(`${connectionString}/api/users`, {
+      email: form.email,
+      password: form.password,
+      name: `${form.fname} ${form.lname}`,
+      dob: new Date
+    }).then(() => {
+      AsyncStorage.setItem('email', form.email).then(() => {
+        this.props.handleAuthChange(true)
+      }).catch((err) => {
+        console.error(err)
+      })
+    }).catch(() => {
+      this.props.handleAuthChange(false)
+    })
   }
 
   render() {
