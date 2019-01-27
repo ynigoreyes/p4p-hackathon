@@ -1,15 +1,16 @@
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
-require('./models/User');
+const mongoose = require('mongoose');
+const UserModel = require('./Models/User')(mongoose);
 require('./config/passport');
 
-const mongoose = require('mongoose');
 let dev_db_url = 'mongodb://Omar:dash1234@ds247670.mlab.com:47670/bauthql';
 mongoose.connect(dev_db_url);
 mongoose.Promise = global.Promise;
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -17,7 +18,6 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 3005;
 
 var router = express.Router();
-
 router.get("/", function(req, res) {
   res.json({ message: "Test GET" });
 });
@@ -25,34 +25,50 @@ router.get("/", function(req, res) {
 //used to add a new user (sign-up)
 router.post("/users", function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  if(User.findOne(email)){            //make sure the user doesn't already exist. resolve
-    res.status(409);
-    res.send("The user already exists");
-  }
-  else{
-    User user = new User();
-    user.signUpUser(req.body);          //make the user
-    user.save();
-    res.status(200);
-    res.send("User created succesfully");
-  }
+  UserModel.findOne({email: req.email}).exec(function(err, user){
+    if(err){
+      res.status(409);
+      res.send("The user already exists");
+    }
+    else{
+      var newUser = new UserModel();
+      newUser.signUpUser(req.body["email"], req.body["name"], req.body["dob"], req.body["password"]);          //make the user
+      newUser.save();
+      res.status(200);
+      res.send();
+    }
+  })
 });
+
+  // if(User.findOne(email)){            //make sure the user doesn't already exist. resolve
+  //   res.status(409);
+  //   res.send("The user already exists");
+  // }
+  // else{
+  //   User user = new User();
+  //   user.signUpUser(req.body);          //make the user
+  //   user.save();
+  //   res.status(200);
+  //   res.send("User created succesfully");
+  // }
 
 
 //used for sign in
 router.post("/user", function(req, res){
   res.setHeader('Content-Type', 'application/json');
-  User user = User.findOne(req.body["email"])
-  if(user != null){
-    if(user.validPassword(res.body["password"])){
-      res.status(200);
-      res.send();
+  UserModel.findOne({email: req.body["email"]}, function(err, results){
+    if(err) res.status(404);
+    console.log(results.name);
+    if(results != null){
+      if(results.validPassword(req.body["password"])){
+        res.status(200);
+      }
+      else{
+        res.status(404);
+      }
     }
-  }
-  else{                         //user doesn't exist
-      res.status(404);
-      res.send("User not found");
-  }
+    res.send();
+  });
 });
 
 
