@@ -3,6 +3,7 @@ var app = express();
 var bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const UserModel = require('./Models/User')(mongoose);
+const myChat = require('./messaging/MyChat.jsx');
 require('./config/passport');
 
 let dev_db_url = 'mongodb://Omar:dash1234@ds247670.mlab.com:47670/bauthql';
@@ -63,21 +64,29 @@ router.post("/user", function(req, res){
 //swipe right.
 //front-end gives me 2 users in the request body.
 //user1 has liked user2
-// router.put("/user", function(req, res){
-//   console.log("swiped_right");
-//   //add user2 to user1.likes
-//   var user1 = UserModel.findOne({email: req.body["email1"]}, function(err, results){
-//     if(err) res.status(404);         //error, need both emails
-//     else{
-//       resolve(results);
-//     }
-//   });
-//   var user2 = UserModel.findOne({email: req.body["email2"]}, function(err, results){
-//     if(err) res.status(404);         //error, need both emails
-//     resolve(results);
-//   });
-//   if(user1.likes.includes(email2) || user2.likes.includes(email1)) ;      //one of the users contains the likes
-// });
+router.put("/user", function(req, res){
+  console.log("swiped_right");
+  res.setHeader('Content-Type', 'application/json');
+  //add user2 to user1.likes
+  var user1 = UserModel.findOne({email: req.body["email1"]}, function(err, results){
+    if(err) res.status(404);         //error, need both emails
+    else{
+      resolve(results);
+    }
+  });
+  user1.likes.push(email2);
+  //check if user2 had previosuly liked user1
+  var user2 = UserModel.findOne({email: req.body["email2"]}, function(err, results){
+    if(err) res.status(404);         //error, need both emails
+    resolve(results);
+  });
+  if(user2.likes.includes(req.body["email1"])){          //match
+    res.send({
+      email1: ""
+      user1.name: ""
+    });
+  };
+});
 
 
 //quick api to server random projects. give an array of 10
@@ -88,52 +97,62 @@ router.get("/projects", function (req, res) {
     {
       name: "Bauthminder",
       description: "bop",
-      owner: "Ohmar"
+      owner: "Ohmar",
+      email: "omar14@gmail.com"
     },
     {
       name: "Powertruck",
       description: "charge your slatebaord as you ride",
-      owner: "Ulises"
+      owner: "Ulises",
+      email: "ulises14@gmail.com"
     },
     {
       name: "Fly catcher",
       description: "kill flies",
-      owner: "Josh"
+      owner: "Josh",
+      email: "josh14@gmail.com"
     },
     {
       name: "Venus fly trapper",
       description: "trap venus flies",
-      owner: "Miggy"
+      owner: "Miggy",
+      email: "miggy14@gmail.com"
     },
     {
       name: "Mars",
       description: "i made a planet",
-      owner: "Ohmar"
+      owner: "Ohmar",
+      email: "mars154@gmail.com"
     },
     {
       name: "Bauthminder2",
       description: "qdwfeghr",
-      owner: "Ohmar"
+      owner: "Ohmar",
+      email: "omar17@gmail.com"
     },
     {
       name: "Bauthminder3",
       description: "bop",
-      owner: "Ohmar"
+      owner: "Ohmar",
+      email: "omar19@gmail.com"
     },
     {
       name: "Bauthminder4",
       description: "bop",
-      owner: "Ohmar"
+      owner: "Ohmar",
+      email: "ramo10@gmail.com"
     },
     {
       name: "Bauthminder5",
       description: "bop",
-      owner: "Ohmar"
+      owner: "Ohmar",
+      email: "sojh14@gmail.com"
     },
     {
       name: "Bauthminder6",
       description: "bop",
-      owner: "Ohmar"
+      owner: "Ohmar",
+      email: "yggim14@gmail.com"
     }
   ]);
 })
