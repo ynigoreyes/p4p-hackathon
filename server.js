@@ -23,7 +23,7 @@ router.get("/", function(req, res) {
 });
 
 //used to add a new user (sign-up)
-router.post("/users", function(req, res) {
+router.post("/register", function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if(User.findOne(email)){            //make sure the user doesn't already exist. resolve
     res.status(409);
