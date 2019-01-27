@@ -5,7 +5,7 @@ export default function PersonDescription({ expanded, handleExpandDesc }) {
   return (
     <View>
       <Button
-        title='Show more or Person'
+        title={`Show ${expanded ? 'less' : 'more'} of Person`}
         onPress={handleExpandDesc}
       />
     </View>
