@@ -16,7 +16,8 @@ module.exports = function(mongoose){
       strengths: [String],
       dislikes: [String],
       reputation: [String],
-      location: String
+      location: String,
+      likes: [String]
   }, {timestamps: true});
 
   UserSchema.plugin(uniqueValidator, {message: "is already taken."});
@@ -31,6 +32,7 @@ module.exports = function(mongoose){
     this.name = name;
     this.dob = dob;
     this.password = this.setPassword(password);
+    this.likes = [];
   };
 
   UserSchema.methods.validPassword = function(password){
@@ -58,6 +60,7 @@ module.exports = function(mongoose){
           strengths: this.strengths,
           dislikes: this.dislikes,
           location: this.location,
+          likes: this.likes,
           profileProgress: this.profileProgress,
       };
   };

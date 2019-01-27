@@ -69,26 +69,39 @@ router.put("/user", function(req, res){
   console.log("swiped_right");
   res.setHeader('Content-Type', 'application/json');
   //add user2 to user1.likes
-  var user1 = UserModel.findOne({email: req.body["email1"]}, function(err, results){
-    if(err) res.status(404);         //error, need both emails
-    else{
-      resolve(results);
-    }
+  var user1 = new Promise(function(resolve, reject){
+    UserModel.findOne({email: req.body["email1"]}, function(err, results){
+      if(err) res.status(404);         //error, need both emails
+      else{
+        resolve(results);
+      }
+    })
   });
-  user1.likes.push(email2);
-  //check if user2 had previosuly liked user1
-  var user2 = UserModel.findOne({email: req.body["email2"]}, function(err, results){
-    if(err) res.status(404);         //error, need both emails
-    resolve(results);
-  });
-  if(user2.likes.includes(req.body["email1"])){          //match
-    res.send({
-      email1: "",
-      user1: {
-        name: ""
+  user1.then(function(val){
+    val.likes.push(req.body["email2"]);
+    //chck if user2 had previosuly liked user1
+    var user2 = new Promise(function(resolve, reject){
+      UserModel.findOne({email: req.body["email2"]}, function(err, results){
+        if(err) res.status(404);         //error, need both emails
+        else{
+          resolve(results);
+        }
+      })
+    });
+    val.save();
+    user2.then(function(val) {
+      if(val.likes.includes(req.body["email1"])){          //match
+        res.send({
+          match: true
+        });
+      }
+      else {
+        res.send({
+          match: false
+        })
       }
     });
-  };
+  });
 });
 
 
