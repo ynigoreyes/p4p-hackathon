@@ -84,7 +84,7 @@ export default class HomeScreen extends React.Component {
   like = () => {
     const email1 = this.state.userEmail
     const email2 = this.state.projects[this.state.currentChoice].email
-    axios.put(`${connectionString}/api/user`, { email1, email2 }).then(({ data }) => {
+    axios.put(`${connectionString}/api/like`, { email1, email2 }).then(({ data }) => {
       this.props.navigation.navigate('Messages', { matchedEmail: email2 })
     }).catch((err) => {
       console.log('No Match')
@@ -141,4 +141,3 @@ export default class HomeScreen extends React.Component {
     }
   }
 }
-
