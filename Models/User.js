@@ -7,7 +7,13 @@ var secret = require('../config/secret.js');
 var UserSchema = new mongoose.Schema({
     email: {type: String, unique: true, required: [true, "cannot be empty."], lowercase: true, index: true},
     salt: String,
-    hash: String
+    hash: String,
+    profession: String,
+    interests: String,
+    strengths: String,
+    dislikes: String,
+    location: String,
+    profileProgress: String,
 }, {timestamps: true});
 
 UserSchema.plugin(uniqueValidator, {message: "is already taken."});
@@ -36,7 +42,13 @@ UserSchema.methods.generateJWT = function(){
 UserSchema.methods.toAuthJSON = function(){
     return {
         email: this.email,
-        token: this.generateJWT()
+        token: this.generateJWT(),
+        profession: this.profession,
+        interests: this.interests,
+        strengths: this.strengths,
+        dislikes: this.dislikes,
+        location: this.location,
+        profileProgress: this.profileProgress,
     };
 };
 
