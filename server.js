@@ -40,18 +40,6 @@ router.post("/register", function(req, res) {
   })
 });
 
-  // if(User.findOne(email)){            //make sure the user doesn't already exist. resolve
-  //   res.status(409);
-  //   res.send("The user already exists");
-  // }
-  // else{
-  //   User user = new User();
-  //   user.signUpUser(req.body);          //make the user
-  //   user.save();
-  //   res.status(200);
-  //   res.send("User created succesfully");
-  // }
-
 
 //used for sign in
 router.post("/user", function(req, res){
@@ -71,7 +59,10 @@ router.post("/user", function(req, res){
   });
 });
 
-
+//swipe right.
+router.put("/user", function(req, res){
+  req.body[""];
+});
 
 app.use("/api", router);
 
