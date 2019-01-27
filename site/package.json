@@ -20,7 +20,8 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
     "react-native-gifted-chat": "0.7.1",
     "react-native-keyboard-spacer": "0.4.1",
-    "react-navigation": "^3.0.9"
+    "react-navigation": "^3.0.9",
+    "uuid": "3.3.2"
   },
   "devDependencies": {
     "axios": "^0.18.0",

@@ -3,7 +3,15 @@ var app = express();
 var bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const UserModel = require('./Models/User')(mongoose);
+const Chatkit = require('@pusher/chatkit-server');
 require('./config/passport');
+
+const CHATKIT_INSTANCE_LOCATOR = 'v1:us1:863f1f81-128b-4435-a173-c7749ff56b99';
+
+const chatkit = new Chatkit.default({
+  instanceLocator: CHATKIT_INSTANCE_LOCATOR,
+  key: '8a1202d8-333b-43b4-aa2b-448635b07683:1lmY5xvtiYRDetXp0VzuqZRPtC+2wOfG45WdYjQVUKA=',
+})
 
 let dev_db_url = 'mongodb://Omar:dash1234@ds247670.mlab.com:47670/bauthql';
 mongoose.connect(dev_db_url);
@@ -26,19 +34,28 @@ router.get("/", function(req, res) {
 router.post("/users", function(req, res) {
   res.setHeader('Content-Type', 'application/json');
   console.log(req.body)
-  UserModel.findOne({email: req.body.email}).exec(function(err, user){
-    if(err || user != null){
-      console.error('Something went wrong')
-      res.status(409);
-      res.send();
-    }
-    else{
-      var newUser = new UserModel();
-      newUser.signUpUser(req.body["email"], req.body["name"], req.body["dob"], req.body["password"]);          //make the user
-      newUser.save();
-      res.status(200);
-      res.send();
-    }
+  chatkit.createUser({
+    id: req.body.email,
+    name: req.body.email,
+  }).then(() => {
+    UserModel.findOne({email: req.body.email}).exec(function(err, user){
+      if(err || user != null){
+        console.error('Something went wrong')
+        res.status(409);
+        res.send();
+      }
+      else{
+        var newUser = new UserModel();
+        console.log(req.body.password)
+        newUser.signUpUser(req.body["email"], req.body["name"], req.body["dob"], req.body["password"]);          //make the user
+        newUser.save();
+        res.status(200);
+        res.send();
+      }
+    })
+  }).catch((err) => {
+    console.error(err)
+    res.status(500).send()
   })
 });
 
@@ -68,40 +85,42 @@ router.post("/user", function(req, res){
 router.put("/user", function(req, res){
   console.log("swiped_right");
   res.setHeader('Content-Type', 'application/json');
-  //add user2 to user1.likes
-  var user1 = new Promise(function(resolve, reject){
-    UserModel.findOne({email: req.body["email1"]}, function(err, results){
-      if(err) res.status(404);         //error, need both emails
-      else{
-        resolve(results);
-      }
-    })
-  });
-  user1.then(function(val){
-    val.likes.push(req.body["email2"]);
-    //chck if user2 had previosuly liked user1
-    var user2 = new Promise(function(resolve, reject){
-      UserModel.findOne({email: req.body["email2"]}, function(err, results){
+
+    //add user2 to user1.likes
+    var user1 = new Promise(function(resolve, reject){
+      UserModel.findOne({email: req.body["email1"]}, function(err, results){
         if(err) res.status(404);         //error, need both emails
         else{
           resolve(results);
         }
       })
     });
-    val.save();
-    user2.then(function(val) {
-      if(val.likes.includes(req.body["email1"])){          //match
-        res.send({
-          match: true
-        });
-      }
-      else {
-        res.send({
-          match: false
+    user1.then(function(val){
+      val.likes.push(req.body["email2"]);
+      //chck if user2 had previosuly liked user1
+      var user2 = new Promise(function(resolve, reject){
+        UserModel.findOne({email: req.body["email2"]}, function(err, results){
+          if(err) res.status(404);         //error, need both emails
+          else{
+            resolve(results);
+          }
         })
-      }
+      });
+      val.save();
+      user2.then(function(val) {
+        if(val.likes.includes(req.body["email1"])){          //match
+          res.send({
+            match: true
+          });
+        }
+        else {
+          res.send({
+            match: false
+          })
+        }
+      });
     });
-  });
+
 });
 
 
