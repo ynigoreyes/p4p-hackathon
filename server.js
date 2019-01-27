@@ -22,9 +22,40 @@ router.get("/", function(req, res) {
   res.json({ message: "Test GET" });
 });
 
+//used to add a new user (sign-up)
 router.post("/users", function(req, res) {
-
+  res.setHeader('Content-Type', 'application/json');
+  if(User.findOne(email)){            //make sure the user doesn't already exist. resolve
+    res.status(409);
+    res.send("The user already exists");
+  }
+  else{
+    User user = new User();
+    user.signUpUser(req.body);          //make the user
+    user.save();
+    res.status(200);
+    res.send("User created succesfully");
+  }
 });
+
+
+//used for sign in
+router.post("/user", function(req, res){
+  res.setHeader('Content-Type', 'application/json');
+  User user = User.findOne(req.body["email"])
+  if(user != null){
+    if(user.validPassword(res.body["password"])){
+      res.status(200);
+      res.send();
+    }
+  }
+  else{                         //user doesn't exist
+      res.status(404);
+      res.send("User not found");
+  }
+});
+
+
 
 app.use("/api", router);
 
