@@ -82,7 +82,7 @@ router.post("/user", function(req, res){
 //swipe right.
 //front-end gives me 2 users in the request body.
 //user1 has liked user2
-router.put("/user", function(req, res){
+router.put("/like", function(req, res){
   console.log("swiped_right");
   res.setHeader('Content-Type', 'application/json');
 
