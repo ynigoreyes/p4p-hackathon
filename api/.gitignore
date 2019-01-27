@@ -1,8 +1,2 @@
-**/*/.expo/*
-npm-debug.*
-*.jks
-*.p12
-*.key
-*.mobileprovision
-.DS_Store
+.gitignore
 node_modules
