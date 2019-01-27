@@ -3,12 +3,7 @@ import layout from '../constants/Layout.js'
 import { View, Text, Button, StyleSheet } from 'react-native'
 import SignInScreen from './SignInScreen.js'
 import SignUpScreen from './SignUpScreen.js'
-
-export const SCREEN_STATES = {
-  DEFAULT: 'default',
-  SIGN_IN: 'sign_in',
-  SIGN_UP: 'sign_up',
-}
+import { SCREEN_STATES } from '../constants/ScreenStates.js'
 
 const style = StyleSheet.create({
   default: {

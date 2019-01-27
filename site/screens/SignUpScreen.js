@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Button } from 'react-native'
-import { SCREEN_STATES } from './AuthScreen.js'
+import { SCREEN_STATES } from '../constants/ScreenStates.js'
 import SignUpForm from '../components/SignUpForm.js'
 import axios from 'axios'
 
