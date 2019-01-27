@@ -1,9 +1,11 @@
 import React from 'react'
+import { connectionString } from '../constants/ConnectionString'
 import { Text, View, Button } from 'react-native'
 import ButtonSelect from '../components/ButtonSelect.js'
 import Preview from '../components/Preview.js'
 import ProjectDescription from '../components/ProjectDescription.js'
 import PersonDescription from '../components/PersonDescription.js'
+import axios from 'axios'
 
 const img = require('../assets/images/charmander.png')
 
@@ -18,9 +20,34 @@ export default class HomeScreen extends React.Component {
     return params
   }
 
+  state = {
+    expanded: false,
+    role: ROLES.PEOPLE,
+    projects: [],
+    currentChoice: 0,
+    loading: true,
+  }
+
   constructor(props) {
     super(props)
     this.props.navigation.setParams({ title: 'People -> Projects' })
+  }
+
+  componentDidMount() {
+    axios.get(`${connectionString}/api/projects`).then(({ data }) => {
+      const randNum = Math.floor(Math.random() * Math.floor(data.length))
+      this.setState({
+        projects: data,
+        currentChoice: randNum
+      })
+    }).catch((err) => {
+      console.error(err)
+    }).finally(() => {
+      this.setState({
+        ...this.state,
+        loading: false
+      })
+    })
   }
 
   handleChangeRole = () => {
@@ -48,48 +75,58 @@ export default class HomeScreen extends React.Component {
     })
   }
 
-  state = {
-    expanded: false,
-    role: ROLES.PEOPLE,
-  }
-
   like = () => {
     console.log('like')
   }
 
   dislike = () => {
-    console.log('dislike')
+    const randNum = Math.floor(Math.random() * Math.floor(this.state.projects.length))
+    this.setState({
+      ...this.state,
+      currentChoice: randNum,
+    })
   }
 
   render() {
-    return (
-      <View>
-        <Preview imgURL={img}/>
-        {
-          this.state.role === ROLES.PROJECT
-            ? (
-              <PersonDescription
-                expanded={this.state.expanded}
-                handleExpandDesc={this.handleExpandDesc}
-              />
-            )
-            : (
-              <ProjectDescription
-                expanded={this.state.expanded}
-                handleExpandDesc={this.handleExpandDesc}
-              />
-            )
-        }
-        <Button
-          title='Change Role'
-          onPress={this.handleChangeRole}
-        />
-        <ButtonSelect
-          onDislike={this.dislike}
-          onLike={this.like}
-        />
-      </View>
-    )
+    {
+      if (this.state.loading) {
+        return (<Text>Loading...</Text>)
+      } else {
+        return (
+          <View>
+            {
+              this.state.expanded
+                ? null
+                : <Preview imgURL={img}/>
+            }
+            {
+              this.state.role === ROLES.PROJECT
+                ? (
+                  <PersonDescription
+                    expanded={this.state.expanded}
+                    handleExpandDesc={this.handleExpandDesc}
+                  />
+                )
+                : (
+                  <ProjectDescription
+                    info={this.state.projects[this.state.currentChoice]}
+                    expanded={this.state.expanded}
+                    handleExpandDesc={this.handleExpandDesc}
+                  />
+                )
+            }
+            <Button
+              title='Change Role'
+              onPress={this.handleChangeRole}
+            />
+            <ButtonSelect
+              onDislike={this.dislike}
+              onLike={this.like}
+            />
+          </View>
+        )
+      }
+    }
   }
 }
 
