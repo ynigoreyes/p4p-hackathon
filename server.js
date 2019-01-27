@@ -1,5 +1,6 @@
 var express = require("express");
 var app = express();
+const axios = require('axios')
 var bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const UserModel = require('./Models/User')(mongoose);
@@ -7,11 +8,86 @@ const Chatkit = require('@pusher/chatkit-server');
 require('./config/passport');
 
 const CHATKIT_INSTANCE_LOCATOR = 'v1:us1:863f1f81-128b-4435-a173-c7749ff56b99';
+const fakeData = [
+    {
+      name: "Bauthminder",
+      description: "bop",
+      owner: "Ohmar",
+      email: "omar14@gmail.com"
+    },
+    {
+      name: "Powertruck",
+      description: "charge your slatebaord as you ride",
+      owner: "Ulises",
+      email: "ulises14@gmail.com"
+    },
+    {
+      name: "Fly catcher",
+      description: "kill flies",
+      owner: "Josh",
+      email: "josh14@gmail.com"
+    },
+    {
+      name: "Venus fly trapper",
+      description: "trap venus flies",
+      owner: "Miggy",
+      email: "miggy14@gmail.com"
+    },
+    {
+      name: "Mars",
+      description: "i made a planet",
+      owner: "Ohmar",
+      email: "mars154@gmail.com"
+    },
+    {
+      name: "Bauthminder2",
+      description: "qdwfeghr",
+      owner: "Ohmar",
+      email: "omar17@gmail.com"
+    },
+    {
+      name: "Bauthminder3",
+      description: "bop",
+      owner: "Ohmar",
+      email: "omar19@gmail.com"
+    },
+    {
+      name: "Bauthminder4",
+      description: "bop",
+      owner: "Ohmar",
+      email: "ramo10@gmail.com"
+    },
+    {
+      name: "Bauthminder5",
+      description: "bop",
+      owner: "Ohmar",
+      email: "sojh14@gmail.com"
+    },
+    {
+      name: "Bauthminder6",
+      description: "bop",
+      owner: "Ohmar",
+      email: "yggim14@gmail.com"
+    }
+]
 
 const chatkit = new Chatkit.default({
   instanceLocator: CHATKIT_INSTANCE_LOCATOR,
   key: '8a1202d8-333b-43b4-aa2b-448635b07683:1lmY5xvtiYRDetXp0VzuqZRPtC+2wOfG45WdYjQVUKA=',
 })
+
+UserModel.deleteMany({}).exec(() => {
+  for (let { name, email } of fakeData) {
+    const newUser = new UserModel()
+    newUser.signUpUser(email, name, new Date, email)
+    newUser.save()
+    chatkit.createUser({
+      id: email,
+      name: email,
+    })
+  }
+})
+
 
 let dev_db_url = 'mongodb://Omar:dash1234@ds247670.mlab.com:47670/bauthql';
 mongoose.connect(dev_db_url);
@@ -123,73 +199,11 @@ router.put("/like", function(req, res){
 
 });
 
-
 //quick api to server random projects. give an array of 10
 router.get("/projects", function (req, res) {
   res.setHeader('Content-Type', 'application/json');
   //name, description, owner
-  res.send([
-    {
-      name: "Bauthminder",
-      description: "bop",
-      owner: "Ohmar",
-      email: "omar14@gmail.com"
-    },
-    {
-      name: "Powertruck",
-      description: "charge your slatebaord as you ride",
-      owner: "Ulises",
-      email: "ulises14@gmail.com"
-    },
-    {
-      name: "Fly catcher",
-      description: "kill flies",
-      owner: "Josh",
-      email: "josh14@gmail.com"
-    },
-    {
-      name: "Venus fly trapper",
-      description: "trap venus flies",
-      owner: "Miggy",
-      email: "miggy14@gmail.com"
-    },
-    {
-      name: "Mars",
-      description: "i made a planet",
-      owner: "Ohmar",
-      email: "mars154@gmail.com"
-    },
-    {
-      name: "Bauthminder2",
-      description: "qdwfeghr",
-      owner: "Ohmar",
-      email: "omar17@gmail.com"
-    },
-    {
-      name: "Bauthminder3",
-      description: "bop",
-      owner: "Ohmar",
-      email: "omar19@gmail.com"
-    },
-    {
-      name: "Bauthminder4",
-      description: "bop",
-      owner: "Ohmar",
-      email: "ramo10@gmail.com"
-    },
-    {
-      name: "Bauthminder5",
-      description: "bop",
-      owner: "Ohmar",
-      email: "sojh14@gmail.com"
-    },
-    {
-      name: "Bauthminder6",
-      description: "bop",
-      owner: "Ohmar",
-      email: "yggim14@gmail.com"
-    }
-  ]);
+  res.send(fakeData)
 })
 
 app.use("/api", router);

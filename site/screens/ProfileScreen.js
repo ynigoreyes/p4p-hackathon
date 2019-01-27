@@ -1,7 +1,6 @@
 import React from 'react'
 import { Text, View, TextInput, ToastAndroid } from 'react-native'
 import { connectionString } from '../constants/ConnectionString'
-import { TextField } from '@material-ui/core/TextField'
 import axios from 'axios'
 
 export default class ProfileScreen extends React.Component {
@@ -36,19 +35,19 @@ export default class ProfileScreen extends React.Component {
     const { handleInputChange } = this
     return (
       <View>
-        <TextField
+        <TextInput
           placeholder='First Name'
           onChangeText={handleInputChange('fname')}
           />
-          <TextField
+          <TextInput
             placeholder='Last Name'
             onChangeText={handleInputChange('lname')}
           />
-          <TextField
+          <TextInput
             placeholder='Age'
             onChangeText={handleInputChange('age')}
           />
-          <TextField
+          <TextInput
             placeholder='Interests'
             onChangeText={handleInputChange('interests')}
           />

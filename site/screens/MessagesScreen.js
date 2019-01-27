@@ -21,7 +21,6 @@ export default class MessagesScreen extends React.Component {
     })
 
     AsyncStorage.getItem('email').then((email) => {
-
       const chatManager = new ChatManager({
         instanceLocator: CHATKIT_INSTANCE_LOCATOR,
         userId: email,
@@ -29,7 +28,7 @@ export default class MessagesScreen extends React.Component {
       })
 
       chatManager.connect().then(currentUser => {
-        matchedEmail = this.props.navigation.navigate.getParam('matchedEmail')
+        matchedEmail = this.props.navigation.getParam('matchedEmail')
           this.currentUser = currentUser;
 
           this.currentUser.createRoom({
