@@ -1,9 +1,11 @@
 import React from 'react'
+import { connectionString } from '../constants/ConnectionString'
 import { Text, View, Button } from 'react-native'
 import ButtonSelect from '../components/ButtonSelect.js'
 import Preview from '../components/Preview.js'
 import ProjectDescription from '../components/ProjectDescription.js'
 import PersonDescription from '../components/PersonDescription.js'
+import axios from 'axios'
 
 const img = require('../assets/images/charmander.png')
 
@@ -21,6 +23,14 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
     this.props.navigation.setParams({ title: 'People -> Projects' })
+  }
+
+  componentDidMount() {
+    axios.get(`${connectionString}/api/projects`).then(({ data }) => {
+      console.log(data)
+    }).catch((err) => {
+      console.error(err)
+    })
   }
 
   handleChangeRole = () => {
