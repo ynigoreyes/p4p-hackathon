@@ -1,6 +1,6 @@
 import React from 'react'
 import { connectionString } from '../constants/ConnectionString'
-import { Text, View, Button } from 'react-native'
+import { Text, View, Button, AsyncStorage } from 'react-native'
 import ButtonSelect from '../components/ButtonSelect.js'
 import Preview from '../components/Preview.js'
 import ProjectDescription from '../components/ProjectDescription.js'
@@ -21,6 +21,7 @@ export default class HomeScreen extends React.Component {
   }
 
   state = {
+    userEmail: '',
     expanded: false,
     role: ROLES.PEOPLE,
     projects: [],
@@ -34,18 +35,23 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(`${connectionString}/api/projects`).then(({ data }) => {
-      const randNum = Math.floor(Math.random() * Math.floor(data.length))
-      this.setState({
-        projects: data,
-        currentChoice: randNum
-      })
-    }).catch((err) => {
-      console.error(err)
-    }).finally(() => {
-      this.setState({
-        ...this.state,
-        loading: false
+    AsyncStorage.getItem('email').then((email) => {
+      axios.get(`${connectionString}/api/projects`).then(({ data }) => {
+        const randNum = Math.floor(Math.random() * Math.floor(data.length))
+        this.setState({
+          projects: data,
+          currentChoice: randNum,
+          userEmail: email
+        })
+      }).catch((err) => {
+        console.error(err)
+      }).finally(() => {
+        this.setState((prevState) => {
+          return ({
+            ...prevState,
+            loading: false
+          })
+        })
       })
     })
   }
@@ -76,7 +82,13 @@ export default class HomeScreen extends React.Component {
   }
 
   like = () => {
-    console.log('like')
+    const email1 = this.state.userEmail
+    const email2 = this.state.projects[this.state.currentChoice].email
+    axios.post(`${connectionString}/api/users`, { email1, email2 }).then(({ data }) => {
+      if (data.match) {
+        this.props.navigation.navigate('Messages')
+      }
+    })
   }
 
   dislike = () => {

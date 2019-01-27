@@ -3,7 +3,6 @@ var app = express();
 var bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const UserModel = require('./Models/User')(mongoose);
-const myChat = require('./messaging/MyChat.jsx');
 require('./config/passport');
 
 let dev_db_url = 'mongodb://Omar:dash1234@ds247670.mlab.com:47670/bauthql';
@@ -26,8 +25,10 @@ router.get("/", function(req, res) {
 //used to add a new user (sign-up)
 router.post("/users", function(req, res) {
   res.setHeader('Content-Type', 'application/json');
+  console.log(req.body)
   UserModel.findOne({email: req.body.email}).exec(function(err, user){
     if(err || user != null){
+      console.error('Something went wrong')
       res.status(409);
       res.send();
     }
@@ -82,8 +83,10 @@ router.put("/user", function(req, res){
   });
   if(user2.likes.includes(req.body["email1"])){          //match
     res.send({
-      email1: ""
-      user1.name: ""
+      email1: "",
+      user1: {
+        name: ""
+      }
     });
   };
 });
