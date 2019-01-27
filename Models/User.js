@@ -51,7 +51,13 @@ UserSchema.methods.generateJWT = function(){
 UserSchema.methods.toAuthJSON = function(){
     return {
         email: this.email,
-        token: this.generateJWT()
+        token: this.generateJWT(),
+        profession: this.profession,
+        interests: this.interests,
+        strengths: this.strengths,
+        dislikes: this.dislikes,
+        location: this.location,
+        profileProgress: this.profileProgress,
     };
 };
 
