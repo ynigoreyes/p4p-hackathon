@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, TextInput, ToastAndroid } from 'react-native'
+import { Text, Button, View, TextInput, ToastAndroid } from 'react-native'
 import { connectionString } from '../constants/ConnectionString'
 import axios from 'axios'
 

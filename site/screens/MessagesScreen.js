@@ -7,12 +7,16 @@ import uuid from 'uuid/v4'
 
 const CHATKIT_TOKEN_PROVIDER_ENDPOINT = 'https://us1.pusherplatform.io/services/chatkit_token_provider/v1/863f1f81-128b-4435-a173-c7749ff56b99/token';
 const CHATKIT_INSTANCE_LOCATOR = 'v1:us1:863f1f81-128b-4435-a173-c7749ff56b99';
-const CHATKIT_ROOM_ID = '19378305';
+const CHATKIT_ROOM_ID = '19378333'; // Test
+// const CHATKIT_ROOM_ID = '19378334'; // Demo
 const CHATKIT_USER_NAME = 'Miggy';
 
 export default class MessagesScreen extends React.Component {
   state = {
-    messages: []
+    messages: [],
+    loading: true,
+    roomId: '',
+    email: '',
   }
 
   componentDidMount() {
@@ -23,33 +27,32 @@ export default class MessagesScreen extends React.Component {
     AsyncStorage.getItem('email').then((email) => {
       const chatManager = new ChatManager({
         instanceLocator: CHATKIT_INSTANCE_LOCATOR,
-        userId: email,
+        userId: 'Miggy',
         tokenProvider: tokenProvider,
       })
 
       chatManager.connect().then(currentUser => {
         matchedEmail = this.props.navigation.getParam('matchedEmail')
-          this.currentUser = currentUser;
-
-          this.currentUser.createRoom({
-            name: uuid(),
-            private: true,
-            addUserIds: [matchedEmail]
-          }).then((room) => {
-            console.log(room)
-            this.currentUser.subscribeToRoom({
-              roomId: CHATKIT_ROOM_ID,
-              hooks: {
-                onMessage: this.onReceive,
-              },
-            });
-          }).catch((err) => {
-            console.error(err)
+        this.currentUser = currentUser
+        this.currentUser.subscribeToRoom({
+          roomId: CHATKIT_ROOM_ID,
+          hooks: {
+            onMessage: this.onReceive,
+          },
+        }).catch((err) => {
+          console.log(err)
+        }).finally(() => {
+          this.setState({
+            loading: false,
+            email,
           })
-        }).catch(err => {
-          console.error(err);
         })
+      }).catch(err => {
+        console.log('error in connect')
+        console.error(err);
+      })
     }).catch(err => {
+      console.log('error in getItem')
       console.error(err)
     })
 
@@ -91,14 +94,20 @@ export default class MessagesScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={messages => this.onSend(messages)}
-          isAnimated={true}
-          user={{
-           _id: CHATKIT_USER_NAME
-         }}
-        />
+        {
+          this.state.loading
+          ? <Text>Loading...</Text>
+          : (
+            <GiftedChat
+              messages={this.state.messages}
+              onSend={messages => this.onSend(messages)}
+              isAnimated={true}
+              user={{
+               _id: 'Miggy'
+             }}
+            />
+          )
+        }
         {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
       </View>
     )

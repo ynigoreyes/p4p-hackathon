@@ -84,7 +84,7 @@ UserModel.deleteMany({}).exec(() => {
     chatkit.createUser({
       id: email,
       name: email,
-    })
+    }).catch(() => ({}))
   }
 })
 
@@ -109,7 +109,6 @@ router.get("/", function(req, res) {
 //used to add a new user (sign-up)
 router.post("/users", function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  console.log(req.body)
   chatkit.createUser({
     id: req.body.email,
     name: req.body.email,
